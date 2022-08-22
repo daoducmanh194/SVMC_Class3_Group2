@@ -1,0 +1,57 @@
+private void showDialog(){
+        AlertDialog.Builder builder=new AlertDialog.Builder(ActivityNhanVien.this);
+        LayoutInflater inflater=getLayoutInflater();
+        View view=inflater.inflate(R.layout.dialog_them_nhanvien,null);
+        builder.setView(view);
+        Dialog dialog=builder.create();
+        dialog.show();
+
+        EditText editTenNv= view.findViewById(R.id.editTenNV);
+        EditText editNamSinh= view.findViewById(R.id.editNamsinh);
+        EditText editQuequan= view.findViewById(R.id.editQuequan);
+        Button btnLuu=view.findViewById(R.id.btnLuu);
+
+        //xử lý spinner
+        Spinner spinner=view.findViewById(R.id.spinner);
+        String trinhDo[]= {"Đại học","Cao đắng","Thạc sĩ"};
+
+        ArrayAdapter<String >adapter1= new ArrayAdapter<>(ActivityNhanVien.this, android.R.layout.simple_list_item_1,trinhDo);
+        adapter1.setDropDownViewResource(android.R.layout.simple_list_item_1);
+        spinner.setAdapter(adapter1);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String s=trinhDo[i];
+                btnLuu.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String ten= editTenNv.getText().toString();
+                        String namsinh=editNamSinh.getText().toString();
+                        String quequan=editQuequan.getText().toString();
+
+                        if(NhanVienDAO.insert(ActivityNhanVien.this,ten,namsinh,quequan,s)){
+                            Toast.makeText(ActivityNhanVien.this,"Thêm thành công !",Toast.LENGTH_SHORT).show();
+                            dsnv.clear();
+                            dsnv.addAll(NhanVienDAO.getAllNhanVien(ActivityNhanVien.this));
+                            adapter.notifyDataSetChanged();
+
+                            dsnvLoc.clear();
+                            dsnvLoc.addAll(NhanVienDAO.getNhanVien(ActivityNhanVien.this));
+                            adapter2.notifyDataSetChanged();
+
+                            dialog.dismiss();
+
+                        }else {
+                            Toast.makeText(ActivityNhanVien.this,"Thất bại . .. .. .",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
